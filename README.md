@@ -80,7 +80,7 @@ cd ~/GazeboSim_performance_inspector/build/
 3. Visualize performance once logging is done:
 ```
 cd ~/GazeboSim_performance_inspector
-python3 scripts/rtf_plotter.py build/rtf.log
+python3 scripts/rtf_plotter.py build/metrics.log
 ```
 
 ## Help
