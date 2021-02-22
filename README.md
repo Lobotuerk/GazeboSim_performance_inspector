@@ -73,7 +73,7 @@ cd ~/GazeboSim_performance_inspector/build/
 # If you're using Ignition:
 ./performance_metrics
 
-# If you-re using Gazebo 11:
+# If you're using Gazebo 11:
 ./performance_metrics --topic "~/world_stats"
 ```
 
