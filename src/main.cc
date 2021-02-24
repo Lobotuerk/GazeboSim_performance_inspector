@@ -1,19 +1,30 @@
 #include <chrono>
+#include <csignal>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <mutex>
-#include <memory>
 #include <string>
 #include <thread>
 #include <tuple>
 
 #include <boost/program_options.hpp>
 
-#include "Listener.hh"
+#include <ignition/msgs.hh>
+#include <ignition/transport.hh>
 
-// TODO have a sigint handler?
-// (can close the file and call the Listener destructor)
+std::ofstream logFile;
+std::mutex fileMutex;
+
+void sigHandler(int signal)
+{
+  std::lock_guard<std::mutex> guard(fileMutex);
+
+  if (logFile.is_open())
+    logFile.close();
+
+  std::exit(signal);
+}
 
 std::tuple<std::string, unsigned int, std::string> parseArgs(const int _argc,
     const char* const *_argv)
@@ -32,7 +43,7 @@ std::tuple<std::string, unsigned int, std::string> parseArgs(const int _argc,
     ("time", po::value<unsigned int>(&time)->default_value(10),
       "How long to record metrics for, in seconds")
     ("file", po::value<std::string>(&file)->default_value(
-      "metrics.log"), "The file to log metrics to");
+      "ign_dome.log"), "The file to log metrics to");
 
   po::variables_map vm;
   po::store(po::parse_command_line(_argc, _argv, desc), vm);
@@ -47,30 +58,37 @@ std::tuple<std::string, unsigned int, std::string> parseArgs(const int _argc,
   return {topic, time, file};
 }
 
+void cb(const ignition::msgs::WorldStatistics &_msg)
+{
+  std::lock_guard<std::mutex> guard(fileMutex);
+
+  if (logFile.is_open())
+    logFile << std::fixed << _msg.real_time_factor() << std::endl;
+}
+
 int main (int argc, char* argv[])
 {
+  signal(SIGINT, sigHandler);
+
   auto params = parseArgs(argc, argv);
   std::string topic = std::get<0>(params);
   unsigned int recordLength = std::get<1>(params);
   std::string fileName = std::get<2>(params);
 
-  auto logFile = std::make_shared<std::ofstream>();
-  auto fileMutex = std::make_shared<std::mutex>();
-
   // open a "fresh" log file for writing
   // (delete any content that already exists in the log file before writing)
-  logFile->open(fileName, std::ofstream::out | std::ostream::trunc);
-  if (!logFile->is_open())
+  logFile.open(fileName, std::ofstream::out | std::ostream::trunc);
+  if (!logFile.is_open())
   {
     std::cerr << "Error creating log file " << fileName << std::endl;
     return -1;
   }
 
-  Listener listener(topic, logFile, fileMutex);
-  if (!listener.Listen())
+  ignition::transport::Node node;
+  if (!node.Subscribe(topic, cb))
   {
     std::cerr << "Error subscribing to topic " << topic << std::endl;
-    logFile->close();
+    logFile.close();
     return -1;
   }
   std::cout << "Saving data from " << topic << " to " << fileName << std::endl;
@@ -79,8 +97,8 @@ int main (int argc, char* argv[])
   std::this_thread::sleep_for(std::chrono::seconds(recordLength));
   std::cout << "Done recording RTF." << std::endl;
 
-  std::lock_guard<std::mutex> guard(*fileMutex);
-  logFile->close();
+  std::lock_guard<std::mutex> guard(fileMutex);
+  logFile.close();
 
   return 0;
 }

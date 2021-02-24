@@ -11,35 +11,52 @@ Tools for analyzing/comparing performance between Gazebo classic (http://gazebos
 1. [Boost - Program Options](https://www.boost.org/doc/libs/1_75_0/doc/html/program_options.html)
 1. C++11 (or newer)
 
+The setup and usage steps assume that you have cloned the repository to `~/` (`$HOME`).
+
 ## Setup
 
-The following steps assume that you have cloned the repository to `~/` (`$HOME`).
+### Gazebo 11
+
+There is no additional setup required for Gazebo 11.
+Make sure you have all of the [requirements](#requirements) installed, and then look at the [usage](#usage) section.
+
+### Ignition Dome
 
 ```
 cd ~/GazeboSim_performance_inspector/
-
-# create a build directory
 mkdir build
 cd build/
-
-# next, configure the build. Pick the step below that matches your platform
-# (i.e., use IGN_DOME if you have Ignition Dome installed,
-# and use GAZEBO_11 if you have Gazebo 11 installed)
-
-# configure the build for Ignition Dome
-cmake .. -DIGN_DOME=ON
-
-# configure the build for Gazebo 11
-cmake .. -DGAZEBO_11=ON
-
-# run the build
+cmake ..
 make
 ```
 
 ## Usage
 
-Running the steps above should have created an executable named `performance_metrics`.
-This executable will subscribe to a simulation topic that contains performance metrics, and log performance metrics to a file for a certain amount of time.
+### Gazebo 11
+
+1. Start a simulation:
+```
+gazebo worlds/shapes.world
+```
+
+2. Run the `log_gazebo_11_metrics.bash` script, passing the amount of time (in seconds) you'd like to record metrics for:
+```
+cd ~/GazeboSim_performance_inspector/scripts/
+
+# the following command will log metrics for 3 seconds
+./log_gazebo_11_metrics.bash 3
+```
+
+3. Data should have been logged to `temp.log`, but is not in the format that is needed for plotting metrics.
+   Run the following command to create a new file called `gazebo_11.log` which contains the RTF data from `temp.log` in a plottable format:
+```
+awk -F\[ '{ split($2, splits, "]"); print splits[1] }' < temp.log > gazebo_11.log
+```
+
+### Ignition Dome
+
+Running the steps in the [setup](#setup) section above should have created an executable named `performance_metrics`.
+This executable will subscribe to an ignition topic that contains performance metrics, and log performance metrics to a file for a certain amount of time.
 
 You can learn more about how to use `performance metrics` by using the `--help` flag:
 ```
@@ -49,38 +66,41 @@ Allowed options:
   --topic arg (=/stats)  The topic to subscribe to that contains performance
                         metrics
   --time arg (=10)      How long to record metrics for, in seconds
-  --file arg (=metrics.log) The file to log metrics to
+  --file arg (=ign_dome.log) The file to log metrics to
 ```
 
-The default topic should work with Ignition topics.
-For Gazebo topics, you'll probably need to change the topic to `~/world_stats`.
+Here's an example of how to log performance metrics from the [shapes.sdf](https://github.com/ignitionrobotics/ign-gazebo/blob/89987404180f38dafe5542d677ba97c8f4ce23d9/examples/worlds/shapes.sdf) world:
 
-### Example Usage
-
-1. Start a simulator:
+1. Start a simulation:
 ```
-# If you're using Ignition:
 ign gazebo -r shapes.sdf
-
-# If you're using Gazebo 11:
-gazebo worlds/shapes.world
 ```
 
 2. Run `performance_metrics`:
 ```
 cd ~/GazeboSim_performance_inspector/build/
 
-# If you're using Ignition:
-./performance_metrics
-
-# If you're using Gazebo 11:
-./performance_metrics --topic "~/world_stats"
+# the following command will log metrics for 3 seconds
+./performance_metrics --time 3
 ```
 
-3. Visualize performance once logging is done:
+### Comparing Gazebo 11 and Ignition Dome
+
+Once you have recorded performance metrics for Gazebo 11 and Ignition Dome, you can use `plot_metrics.py` to plot the metrics for comparison:
 ```
-cd ~/GazeboSim_performance_inspector
-python3 scripts/rtf_plotter.py build/metrics.log
+$ python3 ~/GazeboSim_performance_inspector/scripts/plot_metrics.py -h
+usage: plot_metrics.py [-h] [--img IMG] gazebo_file ign_file
+
+Plot simulation performance metrics.
+
+positional arguments:
+  gazebo_file  The file containing the Gazebo 11 data to be plotted
+  ign_file     The file containing the Ignition data to be plotted
+
+optional arguments:
+  -h, --help   show this help message and exit
+  --img IMG    The name of the file the plot should be saved to. If this
+               argument is not set, the plot won't be saved to a file.
 ```
 
 ## Help
