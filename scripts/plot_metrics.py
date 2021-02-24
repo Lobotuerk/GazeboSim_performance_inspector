@@ -1,7 +1,6 @@
 import argparse
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

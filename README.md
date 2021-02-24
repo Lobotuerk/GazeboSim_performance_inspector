@@ -89,6 +89,13 @@ Once you have recorded performance metrics for Gazebo 11 and Ignition Dome, you 
 $ python3 ~/GazeboSim_performance_inspector/scripts/plot_metrics.py -h
 ```
 
+### Getting Additional Performance Statistics
+
+If you'd like to learn more about how a particular simulator's metrics, you can use `metric_stats.py` to get some basic statistics about metrics that have been logged:
+```
+$ python3 ~/GazeboSim_performance_inspector/scripts/metric_stats.py -h
+```
+
 ## Help
 
 For help with things like converting SDF files to work between Gazebo 11 and Ignition Dome, take a look at [this post](https://community.gazebosim.org/t/migration-from-gazebo-classic-to-ignition-gazebo/805) about Gazebo classic -> Ignition migration.
