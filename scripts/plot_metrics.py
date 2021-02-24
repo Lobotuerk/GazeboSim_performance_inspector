@@ -9,18 +9,22 @@ if __name__ == "__main__":
     parser.add_argument('gazebo_file', type=str,
             help='The file containing the Gazebo 11 data to be plotted')
     parser.add_argument('ign_file', type=str,
-            help='The file containing the Ignition data to be plotted')
+            help='The file containing the Ignition DART data to be plotted')
+    parser.add_argument('tpe_file', type=str,
+            help="The file containing the Ignition TPE data to be plotted")
     parser.add_argument('--img', type=str,
             help="The name of the file the plot should be saved to. If this argument is not set, the plot won't be saved to a file.")
     args = parser.parse_args()
 
     gazebo_data = np.loadtxt(args.gazebo_file, dtype=np.float32)
     ign_data = np.loadtxt(args.ign_file, dtype=np.float32)
+    tpe_data = np.loadtxt(args.tpe_file, dtype=np.float32)
 
     fig = plt.figure()
     ax = fig.add_subplot(111) # the big subplot
-    ax1 = fig.add_subplot(121)
-    ax2 = fig.add_subplot(122)
+    ax1 = fig.add_subplot(131)
+    ax2 = fig.add_subplot(132)
+    ax3 = fig.add_subplot(133)
 
     # Turn off axis lines and ticks of the big subplot
     ax.spines['top'].set_color('none')
@@ -41,7 +45,11 @@ if __name__ == "__main__":
     ax2.plot(ign_data)
     ax2.set_ylim(y_axis_range)
     ax2.set_yticks([])
-    ax2.set_title("Ignition Dome")
+    ax2.set_title("Ignition Dome (DART)")
+    ax3.plot(tpe_data)
+    ax3.set_ylim(y_axis_range)
+    ax3.set_yticks([])
+    ax3.set_title("Ignition Dome (TPE)")
 
     if args.img is not None:
         plt.savefig(args.img)
