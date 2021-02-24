@@ -45,11 +45,11 @@ if __name__ == "__main__":
     ax2.plot(ign_data)
     ax2.set_ylim(y_axis_range)
     ax2.set_yticks([])
-    ax2.set_title("Ignition Dome (DART)")
+    ax2.set_title("Ign Dome (DART)")
     ax3.plot(tpe_data)
     ax3.set_ylim(y_axis_range)
     ax3.set_yticks([])
-    ax3.set_title("Ignition Dome (TPE)")
+    ax3.set_title("Ign Dome (TPE)")
 
     if args.img is not None:
         plt.savefig(args.img)
