@@ -60,7 +60,8 @@ This executable will subscribe to an ignition topic that contains performance me
 
 You can learn more about how to use `performance metrics` by using the `--help` flag:
 ```
-$ ./performance_metrics --help
+cd ~/GazeboSim_performance_inspector/build/
+./performance_metrics --help
 ```
 
 Here's an example of how to log performance metrics from the [shapes.sdf](https://github.com/ignitionrobotics/ign-gazebo/blob/89987404180f38dafe5542d677ba97c8f4ce23d9/examples/worlds/shapes.sdf) world:
@@ -86,14 +87,14 @@ cd ~/GazeboSim_performance_inspector/build/
 
 Once you have recorded performance metrics for Gazebo 11 and Ignition Dome, you can use `plot_metrics.py` to plot the metrics for comparison:
 ```
-$ python3 ~/GazeboSim_performance_inspector/scripts/plot_metrics.py -h
+python3 ~/GazeboSim_performance_inspector/scripts/plot_metrics.py -h
 ```
 
 ### Getting Additional Performance Statistics
 
-If you'd like to learn more about how a particular simulator's metrics, you can use `metric_stats.py` to get some basic statistics about metrics that have been logged:
+If you'd like more information about a particular simulator's metrics, you can use `metric_stats.py` to get some basic statistics about metrics that have been logged:
 ```
-$ python3 ~/GazeboSim_performance_inspector/scripts/metric_stats.py -h
+python3 ~/GazeboSim_performance_inspector/scripts/metric_stats.py -h
 ```
 
 ## Help
