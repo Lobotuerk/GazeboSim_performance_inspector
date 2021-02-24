@@ -61,12 +61,6 @@ This executable will subscribe to an ignition topic that contains performance me
 You can learn more about how to use `performance metrics` by using the `--help` flag:
 ```
 $ ./performance_metrics --help
-Allowed options:
-  -h [ --help ]         Produce help message
-  --topic arg (=/stats)  The topic to subscribe to that contains performance
-                        metrics
-  --time arg (=10)      How long to record metrics for, in seconds
-  --file arg (=ign_dome.log) The file to log metrics to
 ```
 
 Here's an example of how to log performance metrics from the [shapes.sdf](https://github.com/ignitionrobotics/ign-gazebo/blob/89987404180f38dafe5542d677ba97c8f4ce23d9/examples/worlds/shapes.sdf) world:
@@ -93,19 +87,6 @@ cd ~/GazeboSim_performance_inspector/build/
 Once you have recorded performance metrics for Gazebo 11 and Ignition Dome, you can use `plot_metrics.py` to plot the metrics for comparison:
 ```
 $ python3 ~/GazeboSim_performance_inspector/scripts/plot_metrics.py -h
-usage: plot_metrics.py [-h] [--img IMG] gazebo_file ign_file tpe_file
-
-Plot simulation performance metrics.
-
-positional arguments:
-  gazebo_file  The file containing the Gazebo 11 data to be plotted
-  ign_file     The file containing the Ignition DART data to be plotted
-  tpe_file     The file containing the Ignition TPE data to be plotted
-
-optional arguments:
-  -h, --help   show this help message and exit
-  --img IMG    The name of the file the plot should be saved to. If this
-               argument is not set, the plot won't be saved to a file.
 ```
 
 ## Help
