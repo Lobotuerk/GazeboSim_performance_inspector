@@ -1,6 +1,7 @@
 # GazeboSim_performance_inspector
 
 Tools for analyzing/comparing performance between Gazebo classic (http://gazebosim.org/) and Ignition (https://ignitionrobotics.org/home)
+Special mention to https://github.com/adlarkin for the idea and the procedure
 
 ## Requirements
 
